@@ -1,6 +1,7 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #1b1b1b;
+    background: url("bg.jpg");
+    background-size: contain;
     color: white;
 }
 
@@ -55,12 +56,14 @@ h1:focus {
 .container{
     width: 100%;
     display: flex;
+    gap: 1rem;
 }
 
 .row{
     display: flex;
-    background-color: #282828;
+    background-color: #00000070;
     color: white;
+    backdrop-filter: blur(5px);
     
 }
 
@@ -84,6 +87,7 @@ h1:focus {
 }
 
 .movement-card{
+    background-color: transparent;
     
     &:hover{
         cursor: pointer;

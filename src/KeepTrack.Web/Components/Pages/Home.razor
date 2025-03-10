@@ -14,7 +14,7 @@
             <h1 class="big-text @(_averageYearly > _total.Value ? "text-success" : "text-danger")">@_total.Value€</h1>
             <span>@_year: @_averageYearly</span>
         </div>
-        <div class="row" style="background-color: rgba(27, 16, 102, 0.08); padding: 1rem 0; ">
+        <div class="row" style="padding: 1rem 0; ">
             <div class="col-6">
                 <select class="dropdown" @onchange="OnYearChange" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2;">
                     @for (int i = 0; i < 10; i++)
@@ -51,7 +51,7 @@
                 </select>
             </div>
         </div>
-        <div class="row" style="background-color: rgba(64, 151, 242, 0.04); padding: 1rem 0; box-shadow: 0 7px 12px -2px #131212; z-index: 2;}">
+        <div class="row" style="padding: 1rem 0; box-shadow: 0 7px 12px -2px #131212; z-index: 2;}">
             <div class="info-card">
                 @if (_spendings.Debt > 0)
                 {
@@ -65,7 +65,7 @@
                 @{
                     int it = 0;
                 }
-                <div class="flex-column d-flex">
+                <div class="flex-column d-flex gap-3">
                     @foreach (var spending in _spendings.UserSpendings)
                     {
                         <div class="row movement-card" @onclick="@(e => GetUserMovements(spending.UserName))" style="background-color: @(it == 0 ? "#ffffff0f" : "#28282861")">
