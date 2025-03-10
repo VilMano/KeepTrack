@@ -84,6 +84,10 @@ h1:focus {
 }
 
 .movement-card{
+    
+    &:hover{
+        cursor: pointer;
+    }
 }
 
 .left-card{
@@ -133,3 +137,4 @@ h1:focus {
     border: none;
     border-radius: 5px;
 }
+

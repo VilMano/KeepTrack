@@ -1,7 +1,7 @@
 ﻿@page "/"
-@using System.Security.Cryptography
 @using KeepTrack.Models
 @using KeepTrack.Services
+@using Microsoft.AspNetCore.Components.Infrastructure
 @inject MovementService MovementService
 
 @rendermode InteractiveServer
@@ -10,8 +10,9 @@
 
 <div class="text-center">
     <div class="container" style="flex-direction: column; padding-bottom: 3rem">
-        <div class="row" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2;">
-            <h1 class="big-text" style="padding: 5rem;">@_total.Value€</h1>
+        <div class="row" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2; padding: 5rem;">
+            <h1 class="big-text @(_averageYearly > _total.Value ? "text-success" : "text-danger")">@_total.Value€</h1>
+            <span>@_year: @_averageYearly</span>
         </div>
         <div class="row" style="background-color: rgba(27, 16, 102, 0.08); padding: 1rem 0; ">
             <div class="col-6">
@@ -33,9 +34,18 @@
             </div>
             <div class="col-6">
                 <select class="dropdown" @onchange="OnMonthChange" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2;">
-                    @for (int i = 1; i < 13; i++)
+                    @for (var i = 1; i < 13; i++)
                     {
-                        <option value="@_months[i]">@_months[i]</option>
+                        @if (i == DateTime.Now.Month)
+                        {
+                            <option selected=""  value="@_months[i]">@_months[i]</option>
+                            
+                        }
+                        else
+                        {
+                            <option value="@_months[i]">@_months[i]</option>
+                        }
+                        
                     }
 
                 </select>
@@ -58,7 +68,7 @@
                 <div class="flex-column d-flex">
                     @foreach (var spending in _spendings.UserSpendings)
                     {
-                        <div class="row movement-card" style="background-color: @(it == 0 ? "#ffffff0f" : "#28282861")">
+                        <div class="row movement-card" @onclick="@(e => GetUserMovements(spending.UserName))" style="background-color: @(it == 0 ? "#ffffff0f" : "#28282861")">
                             <div class="col left-card">
                                 <span class="name">@spending.UserName</span>
                             </div>
@@ -75,8 +85,8 @@
         <div class="row">
             @if (_movements != null)
             {
-                <div class="scroll" style="overflow-x: scroll; max-height: 20rem; padding: 1rem;">
-                    @foreach (Movement movement in _movements)
+                <div class="scroll" style="overflow-x: scroll; max-height: 30rem; padding: 1rem;">
+                    @foreach (var movement in _movements)
                     {
                         <div class="movement-card row">
                             <div class="left-card col col-8">
@@ -99,8 +109,11 @@
     private int _year;
     private int _month;
 
+    private string _selectedUser = "";
+
     private Total _total = new Total();
-    private List<Movement> _movements = new List<Movement>();
+    private double _averageYearly = 0.0;
+    private List<Movement> _movements = [];
     private Spendings _spendings = new Spendings();
 
     private readonly string[] _months =
@@ -121,11 +134,11 @@
 
     private void InitializeMovements()
     {
-        string[] userColours = MovementService.GetUserColours();
+        var userColours = MovementService.GetUserColours();
 
-        List<Movement> movs = MovementService.GetMovements(_month, _year);
+        var movs = MovementService.GetMovements(_month, _year);
 
-        string[] users = movs.GroupBy(m => m.Spender).Select(m => m.Key).ToArray();
+        var users = movs.GroupBy(m => m.Spender).Select(m => m.Key).ToArray();
         foreach (var movement in movs)
         {
             movement.Colour = movement.Spender == users[0] ? userColours[0] : userColours[1];
@@ -136,6 +149,7 @@
         _movements = ordered;
         _total = MovementService.GetTotal(_year, _month);
         _spendings = MovementService.GetUsersSpendings(_year, _month);
+        _averageYearly = MovementService.GetYearAverage(_year);
     }
 
     private void OnMonthChange(ChangeEventArgs e)
@@ -150,9 +164,21 @@
         InitializeMovements();
     }
 
+    private void GetUserMovements(string user)
+    {
+        var movements = MovementService.GetMovements(_month, _year);
+        _movements = user == _selectedUser ? 
+            // if user values are already selected, return all movements
+            movements.OrderByDescending(m => m.Date).ToList() :
+            // if user values are not selected, return user movements
+            movements.Where(m => m.Spender == user).OrderByDescending(m => m.Date).ToList();
+
+       _selectedUser = _selectedUser == user ? "" : user;
+    } 
+
     private int GetMonthNumber(string month)
     {
-        for (int i = 0; i < _months.Length; i++)
+        for (var i = 0; i < _months.Length; i++)
         {
             if (_months[i] == month)
                 return i;
