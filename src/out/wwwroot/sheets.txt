@@ -1,8 +1,0 @@
-Url,Date
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=373388947#gid=373388947,2023-12
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=643665226#gid=643665226,2023-11
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=1037230915#gid=1037230915,2023-10
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=1737200575#gid=1737200575,2023-09
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=176671737#gid=176671737,2023-08
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=347273#gid=347273,2023-07
-https://docs.google.com/spreadsheets/d/13s9jxi-qe4w-cdp2XU_v3ec2g8qsiAGQV4f4Q1NjAfs/edit?gid=412794679#gid=412794679,2023-06
