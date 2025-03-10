@@ -1,0 +1,15 @@
+name: keeptrack
+
+services:
+  keeptrack:
+    container_name: kt
+    user: 1000:1000
+    build:
+      context: .
+    volumes:
+      - ./App/Files:/App/Files
+      - ./App/Sheet:/App/Sheet
+      - ./App/Data:/App/Data
+      - ./App/Keys:/App/Keys
+    ports:
+      - 8080:8080

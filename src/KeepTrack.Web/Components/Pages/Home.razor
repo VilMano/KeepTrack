@@ -1,0 +1,164 @@
+﻿@page "/"
+@using System.Security.Cryptography
+@using KeepTrack.Models
+@using KeepTrack.Services
+@inject MovementService MovementService
+
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<div class="text-center">
+    <div class="container" style="flex-direction: column; padding-bottom: 3rem">
+        <div class="row" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2;">
+            <h1 class="big-text" style="padding: 5rem;">@_total.Value€</h1>
+        </div>
+        <div class="row" style="background-color: rgba(27, 16, 102, 0.08); padding: 1rem 0; ">
+            <div class="col-6">
+                <select class="dropdown" @onchange="OnYearChange" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2;">
+                    @for (int i = 0; i < 10; i++)
+                    {
+                        if (_year == _year - i)
+                        {
+                            <option selected="selected"
+                                    value="@(DateTime.Now.Year - i)">@(DateTime.Now.Year - i)</option>
+                        }
+                        else
+                        {
+                            <option value="@(DateTime.Now.Year - i)">@(DateTime.Now.Year - i)</option>
+                        }
+                    }
+
+                </select>
+            </div>
+            <div class="col-6">
+                <select class="dropdown" @onchange="OnMonthChange" style="box-shadow: 0 7px 12px -2px #131212; z-index: 2;">
+                    @for (int i = 1; i < 13; i++)
+                    {
+                        <option value="@_months[i]">@_months[i]</option>
+                    }
+
+                </select>
+            </div>
+        </div>
+        <div class="row" style="background-color: rgba(64, 151, 242, 0.04); padding: 1rem 0; box-shadow: 0 7px 12px -2px #131212; z-index: 2;}">
+            <div class="info-card">
+                @if (_spendings.Debt > 0)
+                {
+                    <span class="debt">@_spendings.Payer owes @_spendings.Debt€</span>
+                }
+                else
+                {
+                    <span>Nothing to see here...</span>
+                }
+
+                @{
+                    int it = 0;
+                }
+                <div class="flex-column d-flex">
+                    @foreach (var spending in _spendings.UserSpendings)
+                    {
+                        <div class="row movement-card" style="background-color: @(it == 0 ? "#ffffff0f" : "#28282861")">
+                            <div class="col left-card">
+                                <span class="name">@spending.UserName</span>
+                            </div>
+
+                            <div class="col right-card">
+                                <span class="spendings">@(Math.Round(spending.Spendings, 2))€</span>
+                            </div>
+                        </div>
+                        it++;
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @if (_movements != null)
+            {
+                <div class="scroll" style="overflow-x: scroll; max-height: 20rem; padding: 1rem;">
+                    @foreach (Movement movement in _movements)
+                    {
+                        <div class="movement-card row">
+                            <div class="left-card col col-8">
+                                <span class="description">@movement.Description</span>
+                                <span class="date">@movement.Date.ToString("F").Replace("00:00:00", "")</span>
+                                <span class="user" style="color: @movement.Colour">@movement.Spender</span>
+                            </div>
+                            <div class="right-card col">
+                                <span style="color: #b35f5f" class="cost">@movement.Value€</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private int _year;
+    private int _month;
+
+    private Total _total = new Total();
+    private List<Movement> _movements = new List<Movement>();
+    private Spendings _spendings = new Spendings();
+
+    private readonly string[] _months =
+    {
+        "", "January", "February", "March", "April", "May",
+        "June", "July", "August", "September", "October", "November", "December"
+    };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _year = DateTime.Now.Year;
+        _month = DateTime.Now.Month;
+
+        InitializeMovements();
+    }
+
+    private void InitializeMovements()
+    {
+        string[] userColours = MovementService.GetUserColours();
+
+        List<Movement> movs = MovementService.GetMovements(_month, _year);
+
+        string[] users = movs.GroupBy(m => m.Spender).Select(m => m.Key).ToArray();
+        foreach (var movement in movs)
+        {
+            movement.Colour = movement.Spender == users[0] ? userColours[0] : userColours[1];
+        }
+
+        var ordered = movs.OrderByDescending(m => m.Date).ToList();
+
+        _movements = ordered;
+        _total = MovementService.GetTotal(_year, _month);
+        _spendings = MovementService.GetUsersSpendings(_year, _month);
+    }
+
+    private void OnMonthChange(ChangeEventArgs e)
+    {
+        _month = GetMonthNumber(e.Value.ToString());
+        InitializeMovements();
+    }
+
+    private void OnYearChange(ChangeEventArgs e)
+    {
+        _year = int.Parse(e.Value.ToString());
+        InitializeMovements();
+    }
+
+    private int GetMonthNumber(string month)
+    {
+        for (int i = 0; i < _months.Length; i++)
+        {
+            if (_months[i] == month)
+                return i;
+        }
+
+        return 1;
+    }
+
+}

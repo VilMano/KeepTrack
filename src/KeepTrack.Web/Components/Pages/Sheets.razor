@@ -1,0 +1,38 @@
+﻿@page "/sheets"
+@using KeepTrack.Services
+@inject SheetsService Service
+
+@rendermode InteractiveServer
+
+<PageTitle>Sheets configuration</PageTitle>
+
+<h1>Add sheets URL</h1>
+<div style="display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: column; padding-bottom: 2.5rem;">
+        <label>URL:</label>
+        <InputText class="input-text" @bind-Value="_sheet"></InputText>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; padding-bottom: 2.5rem;">
+        <label>Date [yyyy-mm]:</label>
+        <InputText class="input-text" @bind-Value="_date"></InputText>
+    </div>
+
+    <button class="btn btn-primary" @onclick="SubmitUrl">Submit URL</button>
+</div>
+
+@code {
+    private string _sheet = "";
+    private string _date = "";
+
+    protected override Task OnInitializedAsync()
+    {
+        _ = Service.DownloadSheetsFromGoogle();
+        return base.OnInitializedAsync();
+    }
+
+    private void SubmitUrl()
+    {
+        Service.AddSheet(_sheet, _date);
+    }
+}
