@@ -1,6 +1,6 @@
-/src/KeepTrack.Web/wwwroot/Files
-/src/KeepTrack.Web/bin
-/src/KeepTrack.Web/obj
+src/KeepTrack.Web/wwwroot/Files
+src/KeepTrack.Web/bin
+src/KeepTrack.Web/obj
 
 bin
 obj
